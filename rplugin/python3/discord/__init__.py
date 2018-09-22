@@ -1,13 +1,13 @@
-import atexit
+import neovim
 import re
+
 from contextlib import contextmanager
 from os.path import basename, join
+from atexit import register
 from time import time
-
-import neovim
-
 from .discord_rpc import Discord, NoDiscordClientError, ReconnectError
 from .pidlock import PidLock, get_tempdir
+from .constants import CLIENT_ID, SPECIAL_FTS, SUPPORTED_FTS
 
 
 @contextmanager
@@ -16,21 +16,23 @@ def handle_lock(plugin):
         yield
     except NoDiscordClientError:
         plugin.locked = True
-        plugin.log_warning("local discord client not found")
+        plugin.log_warning('Local Discord client not found')
     except ReconnectError:
         plugin.locked = True
-        plugin.log_error("ran out of reconnect attempts")
+        plugin.log_error('Ran out of reconnect attempts')
 
 
 @neovim.plugin
 class DiscordPlugin(object):
     def __init__(self, vim):
         self.vim = vim
-        self.activate = self.vim.vars.get("discord_activate_on_enter")
         self.discord = None
+        self.activate = 0
+        self.rich_presence = 1
         self.blacklist = []
         self.fts_blacklist = []
-        self.fts_whitelist = []
+        self.fts_aliases = {}
+        self.activity = {'assets': {}}
         # Ratelimits
         self.lock = None
         self.locked = False
@@ -39,95 +41,113 @@ class DiscordPlugin(object):
         self.lasttimestamp = time()
         self.cbtimer = None
 
-    @neovim.autocmd("VimEnter", "*")
+    @neovim.autocmd('VimEnter', '*')
     def on_vimenter(self):
         self.blacklist = [
-            re.compile(x) for x in self.vim.vars.get("discord_blacklist")
+            re.compile(x) for x in self.vim.vars.get('discord_blacklist')
         ]
-        self.fts_blacklist = self.vim.vars.get("discord_fts_blacklist")
-        self.fts_whitelist = self.vim.vars.get("discord_fts_whitelist")
+        self.activate = self.vim.vars.get('discord_activate_on_enter')
+        self.rich_presence = self.vim.vars.get('discord_rich_presence')
+        self.fts_blacklist = self.vim.vars.get('discord_fts_blacklist')
+        self.fts_aliases = self.vim.vars.get('discord_fts_aliases')
 
-    @neovim.autocmd("BufEnter", "*")
+    @neovim.autocmd('BufEnter', '*')
     def on_bufenter(self):
-        if self.activate == 0:
-            return 1
-        self.update_presence()
+        if self.activate:
+            self.update_presence()
 
-    @neovim.command("DiscordUpdatePresence")
+    @neovim.command('DiscordUpdatePresence')
     def update_presence(self):
-        if self.activate == 0:
+        if not self.activate:
             self.activate = 1
+        self.activity['assets'] = {
+            'small_image': 'neovim',
+            'small_text': 'Neovim FTW'
+        }
+        self.activity.setdefault('timestamps', {'start': int(time())})
         if not self.lock:
-            self.lock = PidLock(join(get_tempdir(), "dnvim_lock"))
+            self.lock = PidLock(join(get_tempdir(), 'dnvim_lock'))
         if self.locked:
             return
         if not self.discord:
-            client_id = self.vim.vars.get("discord_clientid")
             reconnect_threshold = \
-                self.vim.vars.get("discord_reconnect_threshold")
+                self.vim.vars.get('discord_reconnect_threshold')
             self.locked = not self.lock.lock()
             if self.locked:
-                self.log_warning("pidfile exists")
+                self.log_warning('Pidfile exists')
                 return
-            self.discord = Discord(client_id, reconnect_threshold)
+            self.discord = Discord(CLIENT_ID, reconnect_threshold)
             with handle_lock(self):
                 self.discord.connect()
-                self.log_debug("init")
+                self.log_debug('Init')
             if self.locked:
                 return
-            atexit.register(self.shutdown)
-        ro = self.get_current_buf_var("&ro")
-        if ro:
+            register(self.shutdown)
+        if self.get_current_buf_var('&ro'):
+            return
+        if not self.rich_presence:
+            self.activity['assets'] = {
+                'large_image': 'neovim',
+                'large_text': 'The one true editor'
+            }
+            self.discord.set_activity(self.activity,
+                                      self.vim.call('getpid'))
             return
         filename = self.vim.current.buffer.name
         if not filename:
             return
-        self.log_debug('filename: {}'.format(filename))
-        if any(it.match(filename) for it in self.blacklist):
+        self.log_debug('filename: %s' % filename)
+        if any(f.match(filename) for f in self.blacklist):
             return
-        ft = self.get_current_buf_var("&ft")
-        self.log_debug('ft: {}'.format(ft))
-        if ft in self.fts_blacklist or ft not in self.fts_whitelist:
+        fn = basename(filename)
+        ft = self.check_special_fts(fn) or self.get_filetype()
+        self.log_debug('ft: %s' % ft)
+        if ft in self.fts_blacklist:
             return
+        if ft not in SUPPORTED_FTS:
+            ft = 'default'
         workspace = self.get_workspace()
         if self.is_ratelimited(filename):
             if self.cbtimer:
-                self.vim.call("timer_stop", self.cbtimer)
-            self.cbtimer = self.vim.call("timer_start", 15,
-                                         "_DiscordRunScheduled")
+                self.vim.call('timer_stop', self.cbtimer)
+            self.cbtimer = self.vim.call('timer_start', 15,
+                                         '_DiscordRunScheduled')
             return
-        self.log_debug("update presence")
+        self.log_debug('Update presence')
         with handle_lock(self):
             self._update_presence(filename, ft, workspace)
 
-    def _update_presence(self, filename, ft, workspace):
-        activity = {}
-        activity["details"] = "Editing {}".format(basename(filename))
-        activity["assets"] = {
-            "large_text": "The One True Editor",
-            "large_image": "neovim"
-        }
-        activity["timestamps"] = {"start": time()}
+    def _update_presence(self, filename, ft, workspace=None):
         if ft:
-            if len(ft) == 1:
-                ft = "lang_{}".format(ft)
-            activity["assets"]["small_text"] = ft
-            activity["assets"]["small_image"] = ft
+            text = 'Editing a {}file'.format(
+                ft.upper() + ' ' if ft != 'default' else '')
+            image = ft if len(ft) > 1 else ft + 'lang'
+            self.activity['assets']['large_image'] = image
+            self.activity['assets']['large_text'] = text
+            self.activity['details'] = 'Editing %s' % basename(filename)
         if workspace:
-            activity["state"] = "Working on {}".format(workspace)
-        self.discord.set_activity(activity, self.vim.call("getpid"))
+            self.activity['state'] = 'Working on %s' % workspace
+        self.discord.set_activity(self.activity, self.vim.call('getpid'))
 
     def get_current_buf_var(self, var):
-        return self.vim.call("getbufvar", self.vim.current.buffer.number, var)
+        return self.vim.call('getbufvar', self.vim.current.buffer.number, var)
+
+    def get_filetype(self):
+        ft = self.get_current_buf_var('&ft')
+        return self.fts_aliases.get(ft, ft)
 
     def get_workspace(self):
         bufnr = self.vim.current.buffer.number
-        dirpath = self.vim.call("discord#GetProjectDir", bufnr)
+        dirpath = self.vim.call('discord#get_project_dir', bufnr)
         if dirpath:
             return basename(dirpath)
         return None
 
-    @neovim.function("_DiscordRunScheduled")
+    def check_special_fts(self, var):
+        return next((k for k, v in SPECIAL_FTS.items()
+                     if bool(v.fullmatch(var))), None)
+
+    @neovim.function('_DiscordRunScheduled')
     def run_scheduled(self, args):
         self.cbtimer = None
         self.update_presence()
@@ -145,14 +165,21 @@ class DiscordPlugin(object):
         self.lastused = True
 
     def log_debug(self, message, trace=None):
-        self.vim.call("discord#LogDebug", message, trace)
+        self.vim.call('discord#log_debug', message, trace)
 
     def log_warning(self, message, trace=None):
-        self.vim.call("discord#LogWarn", message, trace)
+        self.vim.call('discord#log_warn', message, trace)
 
     def log_error(self, message, trace=None):
-        self.vim.call("discord#LogError", message, trace)
+        self.vim.call('discord#log_error', message, trace)
 
     def shutdown(self):
-        self.lock.unlock()
-        self.discord.shutdown()
+        if self.lock:
+            self.lock.unlock()
+        if self.cbtimer:
+            self.vim.call('timer_stop', self.cbtimer)
+        if self.discord:
+            self.discord.shutdown()
+
+# vim:set et sw=4 ts=4:
+

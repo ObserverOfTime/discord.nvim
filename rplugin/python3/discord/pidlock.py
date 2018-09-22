@@ -1,12 +1,11 @@
-from os import environ as env, kill, getpid, remove
-from os.path import exists
+import os
 
 
 def get_tempdir():
-    return env.get("TMPDIR") or\
-        env.get("TEMPDIR") or\
-        env.get("TMP") or\
-        "/tmp"
+    temp = ['TMPDIR', 'TEMPDIR', 'TMP', 'TEMP']
+    return next((os.environ.get(path, None)
+                 for path in temp if path
+                 in os.environ), '/tmp')
 
 
 class PidLock(object):
@@ -16,19 +15,22 @@ class PidLock(object):
     def lock(self):
         if not self.unlock():
             return False
-        with open(self.path, "w") as f:
-            f.write(str(getpid()))
+        with open(self.path, 'w') as f:
+            f.write(str(os.getpid()))
         return True
 
     def unlock(self):
-        if exists(self.path):
-            with open(self.path, "r") as f:
+        if os.path.exists(self.path):
+            with open(self.path, 'r') as f:
                 pid = int(f.read())
-                if pid and pid != getpid():
+                if pid and pid != os.getpid():
                     try:
-                        kill(pid, 0)
+                        os.kill(pid, 0)
                         return False
                     except OSError:
                         pass
-            remove(self.path)
+            os.remove(self.path)
         return True
+
+# vim:set et sw=4 ts=4:
+

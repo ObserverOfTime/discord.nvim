@@ -1,5 +1,5 @@
 " Stolen from https://github.com/w0rp/ale/blob/master/autoload/ale/path.vim#L46
-function! discord#FindNearestDir(buffer, directory_name)
+function! discord#find_nearest_dir(buffer, directory_name)
   let l:buffer_filename = fnamemodify(bufname(a:buffer), ':p')
 
   let l:relative_path = finddir(a:directory_name, l:buffer_filename . ';')
@@ -11,9 +11,9 @@ function! discord#FindNearestDir(buffer, directory_name)
   return ''
 endfunction
 
-function! discord#GetProjectDir(buffer)
+function! discord#get_project_dir(buffer)
   for l:vcs_dir in ['.git', '.hg', '.bzr', '_darcs', '.svn']
-    let l:dir = discord#FindNearestDir(a:buffer, l:vcs_dir)
+    let l:dir = discord#find_nearest_dir(a:buffer, l:vcs_dir)
     if !empty(l:dir)
       return fnamemodify(l:dir, ':h:h')
     endif
@@ -21,19 +21,22 @@ function! discord#GetProjectDir(buffer)
   return ''
 endfunction
 
-function! discord#LogDebug(message, trace)
+function! discord#log_debug(message, trace)
   call add(g:discord_trace, a:trace)
   if g:discord_log_debug
-    echomsg '[discord] ' . a:message
+    echomsg '[Discord] ' . a:message
   endif
 endfunction
 
-function! discord#LogWarn(message, trace)
+function! discord#log_warn(message, trace)
   call add(g:discord_trace, a:trace)
-  echohl WarningMsg | echomsg '[discord] ' . a:message | echohl None
+  echohl WarningMsg | echomsg '[Discord] ' . a:message | echohl None
 endfunction
 
-function! discord#LogError(message, trace)
+function! discord#log_error(message, trace)
   call add(g:discord_trace, a:trace)
-  echohl ErrorMsg | echomsg '[discord] ' . a:message | echohl None
+  echohl ErrorMsg | echomsg '[Discord] ' . a:message | echohl None
 endfunction
+
+" vim:set et sw=2 ts=2:
+

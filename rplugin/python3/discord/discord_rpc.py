@@ -1,10 +1,12 @@
-from contextlib import suppress, contextmanager
-import enum
 import json
 import os
 import socket
 import struct
-import uuid
+
+from contextlib import suppress, contextmanager
+from enum import Enum
+from uuid import uuid4
+from .pidlock import get_tempdir
 
 
 @contextmanager
@@ -15,7 +17,7 @@ def reconnect_on_failure(discord):
         discord.reconnect()
 
 
-class OP(enum.Enum):
+class OP(Enum):
     AUTHENTICATE = 0
     FRAME = 1
     CLOSE = 2
@@ -24,17 +26,17 @@ class OP(enum.Enum):
 class Message:
     @staticmethod
     def authenticate(client_id, version=1):
-        return {"v": version, "client_id": client_id}
+        return {'v': version, 'client_id': client_id}
 
     @staticmethod
     def set_activity(activity, nonce, pid=os.getpid()):
         return {
-            "cmd": "SET_ACTIVITY",
-            "args": {
-                "activity": activity,
-                "pid": pid
+            'cmd': 'SET_ACTIVITY',
+            'args': {
+                'activity': activity,
+                'pid': pid
             },
-            "nonce": nonce
+            'nonce': nonce
         }
 
 
@@ -60,10 +62,8 @@ class Discord(object):
         self.sock = None
 
         # Discord
-        # Stolen from https://github.com/GiovanniMCMXCIX/PyDiscordRPC/blob/master/rpc.py
-        env_vars = ['XDG_RUNTIME_DIR', 'TMPDIR', 'TMP', 'TEMP']
-        path = next((os.environ.get(path, None) for path in env_vars if path in os.environ), '/tmp')
-        self.ipc_path = "{}/discord-ipc-0".format(path)
+        path = os.environ.get('XDG_RUNTIME_DIR', get_tempdir())
+        self.ipc_path = '{}/discord-ipc-0'.format(path)
         self.client_id = client_id
 
     def connect(self, client_id=None):
@@ -87,14 +87,14 @@ class Discord(object):
     def send(self, op, payload):
         if isinstance(op, OP):
             op = op.value
-        payload = json.dumps(payload).encode("utf8")
-        body = struct.pack("<ii", op, len(payload)) + payload
+        payload = json.dumps(payload).encode('utf8')
+        body = struct.pack('<ii', op, len(payload)) + payload
         with reconnect_on_failure(self):
             return self.sock.sendall(body)
         return None
 
     def set_activity(self, activity, pid=os.getpid()):
-        nonce = str(uuid.uuid4())
+        nonce = str(uuid4())
         self.send(OP.FRAME, Message.set_activity(activity, nonce, pid))
         op, length = self.recv()
         if not op and not length:
@@ -103,8 +103,8 @@ class Discord(object):
         body = self.recv_body(length)
         if not body:
             return self.set_activity(activity, pid)
-        assert body["cmd"] == "SET_ACTIVITY"
-        assert body["nonce"] == nonce
+        assert body['cmd'] == 'SET_ACTIVITY'
+        assert body['nonce'] == nonce
 
     def shutdown(self):
         with suppress(socket.error, OSError, BrokenPipeError):
@@ -113,14 +113,14 @@ class Discord(object):
 
     def recv(self):
         with reconnect_on_failure(self):
-            return struct.unpack("<ii", self.sock.recv(8))
+            return struct.unpack('<ii', self.sock.recv(8))
         return (None, None)
 
     def recv_body(self, length):
         with reconnect_on_failure(self):
-            body = json.loads(self.sock.recv(length).decode("utf8"))
-            if body["evt"] == "ERROR":
-                raise DiscordError(body["data"]["message"])
+            body = json.loads(self.sock.recv(length).decode('utf8'))
+            if body['evt'] == 'ERROR':
+                raise DiscordError(body['data']['message'])
             return body
         return None
 
@@ -129,12 +129,15 @@ class Discord(object):
         op, length = self.recv()
         assert op == OP.FRAME.value
         body = self.recv_body(length)
-        assert body["evt"] == "READY"
+        assert body['evt'] == 'READY'
         return body
 
     def reconnect(self):
         if self.reconnect_counter > self.reconnect_threshold:
-            raise ReconnectError("reconnect_counter > reconnect_threshold")
+            raise ReconnectError('reconnect_counter > reconnect_threshold')
         self.disconnect()
         self.reconnect_counter += 1
         self.connect(self.client_id)
+
+# vim:set et sw=4 ts=4:
+
