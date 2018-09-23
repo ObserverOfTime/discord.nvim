@@ -105,7 +105,7 @@ class DiscordPlugin(object):
         if ft in self.fts_blacklist:
             return
         if ft not in SUPPORTED_FTS:
-            ft = 'default'
+            ft = 'unknown'
         workspace = self.get_workspace()
         if self.is_ratelimited(filename):
             if self.cbtimer:
@@ -119,8 +119,7 @@ class DiscordPlugin(object):
 
     def _update_presence(self, filename, ft, workspace=None):
         if ft:
-            text = 'Editing a {}file'.format(
-                ft.upper() + ' ' if ft != 'default' else '')
+            text = 'Filetype: %s' % ft.upper()
             image = ft if len(ft) > 1 else ft + 'lang'
             self.activity['assets']['large_image'] = image
             self.activity['assets']['large_text'] = text

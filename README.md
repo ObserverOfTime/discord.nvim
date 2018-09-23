@@ -28,10 +28,8 @@ To finish things off, call `:UpdateRemotePlugins` and restart Neovim.
 
 ## TODO
 
-- [ ] Update help.
 - [ ] Custom display names.
 - [ ] Idle status.
-- [ ] Cargo & QML support. (no good icons)
 
 ## Icon sources
 

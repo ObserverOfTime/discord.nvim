@@ -13,6 +13,7 @@ SPECIAL_FTS = {
     'bower': re.compile(r'^(\.bowerrc|bower\.json)$'),
     'browserslist': re.compile(r'^(\.|)browserslist(rc|)$'),
     'bundler': re.compile(r'^(Gemfile(\.lock)|\.gemspec)$'),
+    'cargo': re.compile(r'^Cargo\.(toml|lock)$'),
     'circleci': re.compile(r'^circle\.yml$'),
     'codeclimate': re.compile(r'^\.codeclimate\.(yml|json)$'),
     'composer': re.compile(r'^composer\.json$'),
@@ -21,8 +22,8 @@ SPECIAL_FTS = {
     'eslint': re.compile(r'%s' % rc('eslint')),
     'git': re.compile(r'^\.git(ignore|attributes|modules|config)$'),
     'gradle': re.compile(r'^.+\.gradle$'),
-    'grunt': re.compile(r'^[Gg]runtfile\.(js|coffee|ts)$'),
-    'gulp': re.compile(r'^[Gg]ulpfile\.(js|babel\.js|coffee|ts)$'),
+    'grunt': re.compile(r'^[Gg]runtfile\.(js|coffee|ts|ls)$'),
+    'gulp': re.compile(r'^[Gg]ulpfile\.(js|babel\.js|coffee|ts|ls)$'),
     'heroku': re.compile(r'^Procfile$'),
     'jenkins': re.compile(r'^Jenkinsfile$'),
     'license': re.compile(r'^(LICENSE|COPYING)(\..+|)$', re.I),
@@ -33,10 +34,11 @@ SPECIAL_FTS = {
     'maven': re.compile(r'^pom\.xml$'),
     'nginx': re.compile(r'^(.+\.)*nginx\.conf$'),
     'node': re.compile(r'^package\.json$'),
-    'npm': re.compile(r'^(\.npmignore|(\.|)npmrc|'
+    'npm': re.compile(r'^(\.npm(ignore|rc)|'
                       'npm-shrinkwrap\.json|'
                       'package-lock\.json)$'),
     'nuget': re.compile(r'^.*\.nuspec$'),
+    'pip': re.compile(r'^requirements([\.-].+)*\.(pip|txt)$'),
     'readme': re.compile(r'^README(\..+|)$', re.I),
     'robots': re.compile(r'^robots\.txt$', re.I),
     'rollup': re.compile(r'^rollup\.config\.js$'),
@@ -45,7 +47,7 @@ SPECIAL_FTS = {
     'travis': re.compile(r'^\.travis\.yml$'),
     'vagrant': re.compile(r'^Vagrantfile$'),
     'webpack': re.compile(r'^webpack\.config\.js$'),
-    'yarn': re.compile(r'^(.yarn(ignore|rc)|yarn.lock)$'),
+    'yarn': re.compile(r'^(\.yarn(ignore|rc)|yarn.lock)$'),
 }
 
 SUPPORTED_FTS = [
