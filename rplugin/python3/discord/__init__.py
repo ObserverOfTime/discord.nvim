@@ -138,13 +138,17 @@ class DiscordPlugin(object):
     def get_workspace(self):
         bufnr = self.vim.current.buffer.number
         dirpath = self.vim.call('discord#get_project_dir', bufnr)
-        if dirpath:
-            return basename(dirpath)
-        return None
+        return (basename(dirpath) if dirpath else None)
 
     def check_special_fts(self, var):
         return next((k for k, v in SPECIAL_FTS.items()
                      if bool(v.fullmatch(var))), None)
+
+    @neovim.command('DiscordListFiletypes', '?')
+    def list_filetypes(self, args):
+        a = args[0] if len(args) > 0 else ''
+        fts = list(filter(re.compile(a).match, SUPPORTED_FTS))
+        self.vim.command('echo %s' % fts)
 
     @neovim.function('_DiscordRunScheduled')
     def run_scheduled(self, args):

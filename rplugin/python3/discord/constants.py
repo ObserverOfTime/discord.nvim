@@ -16,6 +16,7 @@ SPECIAL_FTS = {
     'cargo': re.compile(r'^Cargo\.(toml|lock)$'),
     'circleci': re.compile(r'^circle\.yml$'),
     'codeclimate': re.compile(r'^\.codeclimate\.(yml|json)$'),
+    'codecov': re.compile(r'^(\.|)codecov\.y(a|)ml$'),
     'composer': re.compile(r'^composer\.json$'),
     'docker': re.compile(r'^[Dd]ocker(file|-compose\.y(a|)ml)$'),
     'editorconfig': re.compile(r'^\.editorconfig$'),

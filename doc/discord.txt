@@ -20,6 +20,7 @@ CONTENTS                                                     *discord-contents*
       2.1.7 g:discord_fts_aliases                       |g:discord_fts_aliases|
     2.2 Commands                                             |discord-commands|
       2.2.1 DiscordUpdatePresence                       |DiscordUpdatePresence|
+      2.2.2 DiscordListFiletypes                         |DiscordListFiletypes|
 
 ===============================================================================
 INTRODUCTION                                             *discord-introduction*
@@ -74,7 +75,8 @@ g:discord_fts_blacklist                               *g:discord_fts_blacklist*
 
     Type: |List|
     Default: >
-        [ 'connvorax',
+        [ 'ale-preview',
+        \ 'connvorax',
         \ 'deol',
         \ 'gitcommit',
         \ 'help',
@@ -82,6 +84,7 @@ g:discord_fts_blacklist                               *g:discord_fts_blacklist*
         \ 'netrw',
         \ 'nerdtree',
         \ 'outputvorax',
+        \ 'pydoc',
         \ 'qf',
         \ 'tagbar',
         \ 'vim-plug',
@@ -133,6 +136,11 @@ DiscordUpdatePresence                                   *DiscordUpdatePresence*
 
     Updates the Discord presence. If |g:discord_activate_on_enter|
     is set to 0, this command will activate the presence.
+
+DiscordListFiletypes [pattern]                             *DiscordListFiletypes*
+
+    Lists the |filetypes| supported by this plugin. When the [pattern]
+    argument is given, it will only show the filetypes that match it.
 
 vim: ft=help
 

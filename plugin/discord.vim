@@ -26,7 +26,7 @@ if !exists('g:discord_reconnect_threshold')
 endif
 
 if !exists('g:discord_log_debug')
-    let g:discord_log_debug = 1
+    let g:discord_log_debug = 0
 endif
 
 if !exists('g:discord_blacklist')
@@ -39,6 +39,7 @@ endif
 
 if !exists('g:discord_fts_blacklist')
     let g:discord_fts_blacklist = [
+                \ 'ale-preview',
                 \ 'connvorax',
                 \ 'deol',
                 \ 'gitcommit',
@@ -46,6 +47,7 @@ if !exists('g:discord_fts_blacklist')
                 \ 'mail',
                 \ 'netrw',
                 \ 'nerdtree',
+                \ 'pydoc',
                 \ 'outputvorax',
                 \ 'qf',
                 \ 'tagbar',
