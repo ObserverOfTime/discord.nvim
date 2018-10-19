@@ -50,6 +50,7 @@ if !exists('g:discord_fts_blacklist')
                 \ 'pydoc',
                 \ 'outputvorax',
                 \ 'qf',
+                \ 'scratch',
                 \ 'tagbar',
                 \ 'vim-plug',
                 \ 'vimfiler',
@@ -75,6 +76,7 @@ let g:discord_fts_aliases['html.mustache'] = 'mustache'
 let g:discord_fts_aliases['html.twig'] = 'twig'
 let g:discord_fts_aliases['javascript.jsx'] = 'jsx'
 let g:discord_fts_aliases['jproperties'] = 'config'
+let g:discord_fts_aliases['json5'] = 'json'
 let g:discord_fts_aliases['mips'] = 'asm'
 let g:discord_fts_aliases['nasm'] = 'asm'
 let g:discord_fts_aliases['plaintex'] = 'tex'

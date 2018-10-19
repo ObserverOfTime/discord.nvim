@@ -56,8 +56,8 @@ class DiscordPlugin(object):
         if self.activate:
             self.update_presence()
 
-    @neovim.command('DiscordUpdatePresence')
-    def update_presence(self):
+    @neovim.command('DiscordUpdatePresence', bang=True)
+    def update_presence(self, bang=False):
         if not self.activate:
             self.activate = 1
         self.activity['assets'] = {
@@ -107,7 +107,7 @@ class DiscordPlugin(object):
         if ft not in SUPPORTED_FTS:
             ft = 'unknown'
         workspace = self.get_workspace()
-        if self.is_ratelimited(filename):
+        if not bang and self.is_ratelimited(filename):
             if self.cbtimer:
                 self.vim.call('timer_stop', self.cbtimer)
             self.cbtimer = self.vim.call('timer_start', 15,

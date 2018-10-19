@@ -38,7 +38,7 @@ SPECIAL_FTS = {
     'npm': re.compile(r'^(\.npm(ignore|rc)|'
                       'npm-shrinkwrap\.json|'
                       'package-lock\.json)$'),
-    'nuget': re.compile(r'^.*\.nuspec$'),
+    'nuget': re.compile(r'^(.*\.nuspec|nuget\.config)$'),
     'pip': re.compile(r'^requirements([\.-].+)*\.(pip|txt)$'),
     'readme': re.compile(r'^README(\..+|)$', re.I),
     'robots': re.compile(r'^robots\.txt$', re.I),

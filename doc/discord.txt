@@ -86,6 +86,7 @@ g:discord_fts_blacklist                               *g:discord_fts_blacklist*
         \ 'outputvorax',
         \ 'pydoc',
         \ 'qf',
+        \ 'scratch',
         \ 'tagbar',
         \ 'vim-plug',
         \ 'vimfiler',
