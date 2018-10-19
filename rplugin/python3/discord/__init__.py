@@ -33,6 +33,8 @@ class DiscordPlugin(object):
         self.fts_blacklist = []
         self.fts_aliases = {}
         self.activity = {'assets': {}}
+        self.idletimer = None
+        self.idle_counter = 0
         # Ratelimits
         self.lock = None
         self.locked = False
@@ -50,11 +52,25 @@ class DiscordPlugin(object):
         self.rich_presence = self.vim.vars.get('discord_rich_presence')
         self.fts_blacklist = self.vim.vars.get('discord_fts_blacklist')
         self.fts_aliases = self.vim.vars.get('discord_fts_aliases')
+        self.idle_timeout = self.vim.vars.get('discord_idle_timeout')
 
     @neovim.autocmd('BufEnter', '*')
     def on_bufenter(self):
         if self.activate:
             self.update_presence()
+
+    @neovim.autocmd('CursorMoved', '*')
+    def on_cursormoved(self):
+        if self.idletimer:
+            self.idle_counter = 0
+            self.vim.call('timer_stop', self.idletimer)
+            self.idletimer = None
+
+    @neovim.autocmd('CursorHold', '*')
+    def on_cursorhold(self):
+        if not self.idletimer:
+            self.idletimer = self.vim.call('timer_start', 30,
+                                           '_DiscordIdleTimer')
 
     @neovim.command('DiscordUpdatePresence', bang=True)
     def update_presence(self, bang=False):
@@ -90,6 +106,15 @@ class DiscordPlugin(object):
                 'large_image': 'neovim',
                 'large_text': 'The one true editor'
             }
+            self.discord.set_activity(self.activity,
+                                      self.vim.call('getpid'))
+            return
+        if self.idle_counter == self.idle_timeout:
+            self.activity['assets'] = {
+                'large_image': 'neovim',
+                'large_text': 'The one true editor'
+            }
+            self.activity['details'] = 'Idling...'
             self.discord.set_activity(self.activity,
                                       self.vim.call('getpid'))
             return
@@ -151,9 +176,15 @@ class DiscordPlugin(object):
         self.vim.command('echo %s' % fts)
 
     @neovim.function('_DiscordRunScheduled')
-    def run_scheduled(self, args):
+    def run_scheduled(self, _):
         self.cbtimer = None
         self.update_presence()
+
+    @neovim.function('_DiscordIdleTimer')
+    def idle_timer(self, _):
+        self.idle_counter = self.idle_timeout
+        self.log_debug('counter: %s' % self.idle_counter)
+        self.update_presence(bang=True)
 
     def is_ratelimited(self, filename):
         if self.lastfilename == filename:

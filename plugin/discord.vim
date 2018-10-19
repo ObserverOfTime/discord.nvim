@@ -33,6 +33,10 @@ if !exists('g:discord_blacklist')
     let g:discord_blacklist = []
 endif
 
+if !exists('g:discord_idle_timeout')
+    let g:discord_idle_timeout = 60
+endif
+
 if !exists('g:_discord_trace')
     let g:_discord_trace = []
 endif
