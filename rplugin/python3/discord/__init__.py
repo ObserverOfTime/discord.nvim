@@ -101,6 +101,8 @@ class DiscordPlugin(object):
             return
         fn = basename(filename)
         ft = self.check_special_fts(fn) or self.get_filetype()
+        if not ft:
+            return
         self.log_debug('ft: %s' % ft)
         if ft in self.fts_blacklist:
             return

@@ -42,6 +42,7 @@ if !exists('g:discord_fts_blacklist')
                 \ 'ale-preview',
                 \ 'connvorax',
                 \ 'deol',
+                \ 'fzf',
                 \ 'gitcommit',
                 \ 'help',
                 \ 'mail',
