@@ -32,5 +32,3 @@ class PidLock(object):
             os.remove(self.path)
         return True
 
-# vim:set et sw=4 ts=4:
-

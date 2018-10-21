@@ -1,6 +1,6 @@
 *discord*  Discord Rich Presence for Neovim.
 
-Version:     0.1.0
+Version:     0.2.0
 Author:      aurieh <me@aurieh.me>
 Maintainer:  ObserverOfTime <chronobserver@disroot.org>
 License:     BSD 3-Clause
@@ -18,6 +18,8 @@ CONTENTS                                                     *discord-contents*
       2.1.5 g:discord_blacklist                           |g:discord_blacklist|
       2.1.6 g:discord_fts_blacklist                   |g:discord_fts_blacklist|
       2.1.7 g:discord_fts_aliases                       |g:discord_fts_aliases|
+      2.1.8 g:discord_vcs_dirs                             |g:discord_vcs_dirs|
+      2.1.9 g:discord_workspace                           |g:discord_workspace|
     2.2 Commands                                             |discord-commands|
       2.2.1 DiscordUpdatePresence                       |DiscordUpdatePresence|
       2.2.2 DiscordListFiletypes                         |DiscordListFiletypes|
@@ -129,8 +131,34 @@ g:discord_fts_aliases                                   *g:discord_fts_aliases*
 <
     A dictionary of filetype aliases. The key is the |filetype|
     as recognised by Neovim and the value is one of the filetypes
-    that are supported by this plugin. You can find a list of
-    supported filetypes in `rplugin/python3/discord/constants.py`.
+    that are supported by this plugin. You can view the list of
+    supported filetypes with the |DiscordListFiletypes| command.
+
+g:discord_vcs_dirs                                         *g:discord_vcs_dirs*
+
+    Type: |List|
+    Default: >
+        [ '.git',
+        \ '.svn',
+        \ '.hg',
+        \ '.bzr',
+        \ '_darcs' ]
+<
+    A list of VCS directories the plugin looks for in order
+    to determine the workspace. Directories that aren't
+    in the default list are currently not supported.
+
+g:discord_workspace                                       *g:discord_workspace*
+
+    Type: |String|
+
+    This plugin finds the workspace by looking for VCS
+    directories, and using the respective VCS program to
+    get the name from the repository URL, falling back to
+    the name of the repository's root directory. If you
+    want to skip this process, or set a custom name, or
+    if you're working on a project that isn't under a VCS;
+    you can set this variable to the name of your project.
 
 -------------------------------------------------------------------------------
 COMMANDS                                                     *discord-commands*
@@ -140,7 +168,7 @@ DiscordUpdatePresence                                   *DiscordUpdatePresence*
     Updates the Discord presence. If |g:discord_activate_on_enter|
     is set to 0, this command will activate the presence.
 
-DiscordListFiletypes [pattern]                             *DiscordListFiletypes*
+DiscordListFiletypes [pattern]                           *DiscordListFiletypes*
 
     Lists the |filetypes| supported by this plugin. When the [pattern]
     argument is given, it will only show the filetypes that match it.

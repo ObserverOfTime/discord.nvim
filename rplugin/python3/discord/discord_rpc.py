@@ -139,5 +139,3 @@ class Discord(object):
         self.reconnect_counter += 1
         self.connect(self.client_id)
 
-# vim:set et sw=4 ts=4:
-

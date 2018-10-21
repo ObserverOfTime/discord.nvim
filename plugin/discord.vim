@@ -33,6 +33,16 @@ if !exists('g:discord_blacklist')
     let g:discord_blacklist = []
 endif
 
+if !exists('g:discord_vcs_dirs')
+    let g:discord_vcs_dirs = [
+                \ '.git',
+                \ '.svn',
+                \ '.hg',
+                \ '.bzr',
+                \ '_darcs'
+                \ ]
+endif
+
 if !exists('g:_discord_trace')
     let g:_discord_trace = []
 endif
@@ -75,9 +85,12 @@ let g:discord_fts_aliases['fish'] = 'sh'
 let g:discord_fts_aliases['htmldjango'] = 'django'
 let g:discord_fts_aliases['html.mustache'] = 'mustache'
 let g:discord_fts_aliases['html.twig'] = 'twig'
+let g:discord_fts_aliases['httplog'] = 'log'
 let g:discord_fts_aliases['javascript.jsx'] = 'jsx'
 let g:discord_fts_aliases['jproperties'] = 'config'
 let g:discord_fts_aliases['json5'] = 'json'
+let g:discord_fts_aliases['log4j'] = 'log'
+let g:discord_fts_aliases['messages'] = 'log'
 let g:discord_fts_aliases['mips'] = 'asm'
 let g:discord_fts_aliases['nasm'] = 'asm'
 let g:discord_fts_aliases['plaintex'] = 'tex'
@@ -86,6 +99,7 @@ let g:discord_fts_aliases['qmake'] = 'qt'
 let g:discord_fts_aliases['qml'] = 'qt'
 let g:discord_fts_aliases['scss'] = 'sass'
 let g:discord_fts_aliases['sed'] = 'sh'
+let g:discord_fts_aliases['syslog'] = 'log'
 let g:discord_fts_aliases['vb'] = 'dotnet'
 let g:discord_fts_aliases['vbnet'] = 'dotnet'
 let g:discord_fts_aliases['zsh'] = 'sh'

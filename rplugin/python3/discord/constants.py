@@ -90,7 +90,7 @@ SUPPORTED_FTS = [
     'java',
     'javascript',
     'jinja',
-    'json',
+    'json',  # (includes json5)
     'jsp',
     'jsx',  # (includes javascript.jsx)
     'julia',
@@ -98,7 +98,7 @@ SUPPORTED_FTS = [
     'less',
     'liquid',
     'lisp',
-    'log',
+    'log',  # (includes httplog, log4j, messages, syslog)
     'ls',
     'lua',
     'make',

@@ -139,7 +139,7 @@ class DiscordPlugin(object):
 
     def get_workspace(self):
         bufnr = self.vim.current.buffer.number
-        dirpath = self.vim.call('discord#get_project_dir', bufnr)
+        dirpath = self.vim.call('discord#get_workspace', bufnr)
         return (basename(dirpath) if dirpath else None)
 
     def check_special_fts(self, var):
@@ -185,6 +185,4 @@ class DiscordPlugin(object):
             self.vim.call('timer_stop', self.cbtimer)
         if self.discord:
             self.discord.shutdown()
-
-# vim:set et sw=4 ts=4:
 
