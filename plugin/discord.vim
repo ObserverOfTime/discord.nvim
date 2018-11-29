@@ -52,10 +52,14 @@ if !exists('g:discord_fts_blacklist')
                 \ 'ale-preview',
                 \ 'connvorax',
                 \ 'deol',
+                \ 'far_vim',
                 \ 'fzf',
                 \ 'gitcommit',
                 \ 'help',
                 \ 'mail',
+                \ 'man',
+                \ 'Mundo',
+                \ 'MundoDiff',
                 \ 'netrw',
                 \ 'nerdtree',
                 \ 'pydoc',
@@ -65,7 +69,8 @@ if !exists('g:discord_fts_blacklist')
                 \ 'tagbar',
                 \ 'vim-plug',
                 \ 'vimfiler',
-                \ 'vimshell'
+                \ 'vimshell',
+                \ 'xxd'
                 \ ]
 endif
 
@@ -93,6 +98,7 @@ let g:discord_fts_aliases['log4j'] = 'log'
 let g:discord_fts_aliases['messages'] = 'log'
 let g:discord_fts_aliases['mips'] = 'asm'
 let g:discord_fts_aliases['nasm'] = 'asm'
+let g:discord_fts_aliases['perl6'] = 'perl'
 let g:discord_fts_aliases['plaintex'] = 'tex'
 let g:discord_fts_aliases['qbs'] = 'qt'
 let g:discord_fts_aliases['qmake'] = 'qt'

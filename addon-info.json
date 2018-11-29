@@ -1,0 +1,10 @@
+{
+  "name": "discord.nvim",
+  "version": "0.2.1",
+  "description": "Discord rich presence for Neovim.",
+  "author": "aurieh <me@aurieh.me>",
+  "maintainer": "ObserverOfTime <chronobserver@disroot.org>",
+  "repository": {"type": "git", "url": "https://github.com/ObserverOfTime/discord.nvim"},
+  "dependencies": {}
+}
+

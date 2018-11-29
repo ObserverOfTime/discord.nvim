@@ -1,6 +1,6 @@
 *discord*  Discord Rich Presence for Neovim.
 
-Version:     0.2.0
+Version:     0.2.1
 Author:      aurieh <me@aurieh.me>
 Maintainer:  ObserverOfTime <chronobserver@disroot.org>
 License:     BSD 3-Clause
@@ -80,10 +80,14 @@ g:discord_fts_blacklist                               *g:discord_fts_blacklist*
         [ 'ale-preview',
         \ 'connvorax',
         \ 'deol',
+        \ 'far_vim',
         \ 'fzf',
         \ 'gitcommit',
         \ 'help',
         \ 'mail',
+        \ 'man',
+        \ 'Mundo',
+        \ 'MundoDiff',
         \ 'netrw',
         \ 'nerdtree',
         \ 'outputvorax',
@@ -93,7 +97,8 @@ g:discord_fts_blacklist                               *g:discord_fts_blacklist*
         \ 'tagbar',
         \ 'vim-plug',
         \ 'vimfiler',
-        \ 'vimshell' ]
+        \ 'vimshell',
+        \ 'xxd' ]
 <
     A list of ignored |filetypes|.
 
@@ -119,6 +124,7 @@ g:discord_fts_aliases                                   *g:discord_fts_aliases*
         \ 'json5': 'json',
         \ 'mips': 'asm',
         \ 'nasm': 'asm',
+        \ 'perl6': 'perl',
         \ 'plaintex': 'tex',
         \ 'qbs': 'qt',
         \ 'qmake': 'qt',
