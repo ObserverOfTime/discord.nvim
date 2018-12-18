@@ -22,7 +22,7 @@ SPECIAL_FTS = {
     'editorconfig': re.compile(r'^[.]editorconfig$'),
     'eslint': re.compile(r'%s' % rc('eslint')),
     'git': re.compile(r'^[.]git(ignore|attributes|modules|config)$'),
-    'gradle': re.compile(r'^.+[.]gradle$'),
+    'gradle': re.compile(r'^.+[.]gradle([.]kts)?$'),
     'grunt': re.compile(r'^[Gg]runtfile[.](babel[.]js|[jtl]s|coffee)$'),
     'gulp': re.compile(r'^[Gg]ulpfile[.](babel[.]js|[jtl]s|coffee)$'),
     'heroku': re.compile(r'^Procfile$'),
@@ -105,6 +105,7 @@ SUPPORTED_FTS = [
     'markdown',
     'matlab',
     'mustache',  # (includes html.mustache)
+    'nim',
     'nix',
     'nsis',
     'ocaml',

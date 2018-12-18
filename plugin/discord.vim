@@ -60,10 +60,10 @@ if !exists('g:discord_fts_blacklist')
                 \ 'man',
                 \ 'Mundo',
                 \ 'MundoDiff',
-                \ 'netrw',
                 \ 'nerdtree',
-                \ 'pydoc',
+                \ 'netrw',
                 \ 'outputvorax',
+                \ 'pydoc',
                 \ 'qf',
                 \ 'scratch',
                 \ 'tagbar',
@@ -85,13 +85,16 @@ let g:discord_fts_aliases['cfg'] = 'config'
 let g:discord_fts_aliases['conf'] = 'config'
 let g:discord_fts_aliases['delphi'] = 'pascal'
 let g:discord_fts_aliases['dosini'] = 'config'
+let g:discord_fts_aliases['dtd'] = 'xml'
 let g:discord_fts_aliases['fasm'] = 'asm'
 let g:discord_fts_aliases['fish'] = 'sh'
-let g:discord_fts_aliases['htmldjango'] = 'django'
 let g:discord_fts_aliases['html.mustache'] = 'mustache'
 let g:discord_fts_aliases['html.twig'] = 'twig'
+let g:discord_fts_aliases['htmldjango'] = 'django'
 let g:discord_fts_aliases['httplog'] = 'log'
 let g:discord_fts_aliases['javascript.jsx'] = 'jsx'
+let g:discord_fts_aliases['jinja.html'] = 'jinja'
+let g:discord_fts_aliases['jinja2'] = 'jinja'
 let g:discord_fts_aliases['jproperties'] = 'config'
 let g:discord_fts_aliases['json5'] = 'json'
 let g:discord_fts_aliases['log4j'] = 'log'
@@ -108,5 +111,8 @@ let g:discord_fts_aliases['sed'] = 'sh'
 let g:discord_fts_aliases['syslog'] = 'log'
 let g:discord_fts_aliases['vb'] = 'dotnet'
 let g:discord_fts_aliases['vbnet'] = 'dotnet'
+let g:discord_fts_aliases['xquery'] = 'xml'
+let g:discord_fts_aliases['xsd'] = 'xml'
+let g:discord_fts_aliases['xslt'] = 'xml'
 let g:discord_fts_aliases['zsh'] = 'sh'
 
