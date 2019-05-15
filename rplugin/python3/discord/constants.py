@@ -1,54 +1,63 @@
 import re
 
-rc = lambda n: '^([.]?{0}rc([.]js(on)?|[.]ya?ml)?|' \
-               '{0}[.]config[.]js|[.]{0}ignore)$'.format(n)
+
+def _rc_ignore(n):
+    return r'^(\.?{0}rc_ignore(\.js(on)?|\.ya?ml)?|' \
+        r'{0}\.config\.js|\.{0}ignore)$'.format(n)
+
 
 CLIENT_ID = '492721776145596416'
 
 SPECIAL_FTS = {
-    'ansible': re.compile(r'^(ansible[.]cfg|site.ya?ml|hosts)$'),
-    'apache': re.compile(r'^((.+[.])*(apache|httpd)[.]conf|[.]htaccess)$'),
-    'appveyor': re.compile(r'^[.]?appveyor[.]ya?ml$'),
-    'babel': re.compile(r'%s' % rc('babel')),
-    'bower': re.compile(r'^([.]bowerrc|bower[.]json)$'),
-    'browserslist': re.compile(r'^[.]?browserslist(rc|)$'),
-    'bundler': re.compile(r'^(Gemfile([.]lock)|[.]gemspec)$'),
-    'cargo': re.compile(r'^Cargo[.](toml|lock)$'),
-    'circleci': re.compile(r'^circle[.]yml$'),
-    'codeclimate': re.compile(r'^[.]codeclimate[.](ya?ml|json)$'),
-    'codecov': re.compile(r'^[.]?codecov[.]ya?ml$'),
-    'composer': re.compile(r'^composer[.]json$'),
-    'docker': re.compile(r'^[Dd]ocker(file|-compose[.]ya?ml)$'),
-    'editorconfig': re.compile(r'^[.]editorconfig$'),
-    'eslint': re.compile(r'%s' % rc('eslint')),
-    'git': re.compile(r'^[.]git(ignore|attributes|modules|config)$'),
-    'gradle': re.compile(r'^.+[.]gradle([.]kts)?$'),
-    'grunt': re.compile(r'^[Gg]runtfile[.](babel[.]js|[jtl]s|coffee)$'),
-    'gulp': re.compile(r'^[Gg]ulpfile[.](babel[.]js|[jtl]s|coffee)$'),
-    'heroku': re.compile(r'^Procfile$'),
+    'angular': re.compile(r'\.?angular(-cli)?.json'),
+    'ansible': re.compile(r'^(ansible\.cfg|site.ya?ml|hosts)$'),
+    'apache': re.compile(r'^(.*(apache|httpd)\.conf|\.htaccess)$'),
+    'appveyor': re.compile(r'^\.?appveyor\.ya?ml$'),
+    'babel': re.compile(_rc_ignore('babel')),
+    'bower': re.compile(r'^(\.bowerrc|bower\.json)$'),
+    'browserslist': re.compile(r'^\.?browserslist(rc|)$'),
+    'bundler': re.compile(r'^(Gemfile(\.lock)|\.gemspec)$'),
+    'cargo': re.compile(r'^Cargo\.(toml|lock)$'),
+    'circleci': re.compile(r'^circle\.yml$'),
+    'codacy': re.compile(r'\.codacy\.ya?ml$'),
+    'codeclimate': re.compile(r'^\.codeclimate\.(ya?ml|json)$'),
+    'codecov': re.compile(r'^\.?codecov\.ya?ml$'),
+    'composer': re.compile(r'^composer\.(json|lock)$'),
+    'docker': re.compile(r'^(docker-(cloud|compose.*)\.ya?ml|'
+                         r'\.dockerignore|Dockerfile)$'),
+    'editorconfig': re.compile(r'^\.editorconfig$'),
+    'eslint': re.compile(_rc_ignore('eslint')),
+    'firebase': re.compile(r'^(\.?fire(base(\.json|rc)|store\.rules))$'),
+    'git': re.compile(r'^(\.git(ignore|attributes|config|'
+                      r'modules|keep)|\.mailmap)$'),
+    'gradle': re.compile(r'^.+\.gradle(\.kts)?$'),
+    'grunt': re.compile(r'^[Gg]runtfile\.(babel\.js|[jtl]s|coffee)$'),
+    'gulp': re.compile(r'^[Gg]ulpfile\.(babel\.js|[jtl]s|coffee)$'),
+    'heroku': re.compile(r'^(Procfile|app.json)$'),
     'jenkins': re.compile(r'^Jenkinsfile$'),
-    'license': re.compile(r'^(LICENSE|COPYING)([.].+)?$', re.I),
-    'log': re.compile(r'^.+[.]log$', re.I),
-    'manifest': re.compile(r'^(manifest[.](mf|json)|'
-                           'AndroidManifest[.]xml|'
-                           '.*[.]webmanifest)$', re.I),
-    'maven': re.compile(r'^(pom[.]xml|.*[.]pom)$'),
-    'nginx': re.compile(r'^(.+[.])*nginx[.]conf$'),
-    'node': re.compile(r'^package[.]json$'),
-    'npm': re.compile(r'^([.]npm(ignore|rc)|'
-                      'npm-shrinkwrap[.]json|'
-                      'package-lock[.]json)$'),
-    'nuget': re.compile(r'^(.*[.]nuspec|nuget[.]config)$', re.I),
-    'pip': re.compile(r'^requirements([[.]-].+)*[.](pip|txt)$'),
-    'readme': re.compile(r'^README([.].+)?$', re.I),
-    'robots': re.compile(r'^robots[.]txt$', re.I),
-    'rollup': re.compile(r'^rollup[.]config[.]js$'),
-    'stylelint': re.compile(r'%s' % rc('stylelint')),
-    'tern': re.compile(r'^[.]tern-(project|config)$'),
-    'travis': re.compile(r'^[.]travis[.]yml$'),
+    'license': re.compile(r'^(LICENSE|COPYING)(\..+)?$', re.I),
+    'log': re.compile(r'^.+\.log$', re.I),
+    'manifest': re.compile(r'^(manifest\.(mf|json)|'
+                           r'AndroidManifest\.xml|'
+                           r'.*\.webmanifest)$', re.I),
+    'maven': re.compile(r'^(pom\.xml|.*\.pom)$'),
+    'nginx': re.compile(r'^.*nginx\.conf$'),
+    'node': re.compile(r'^package\.json$'),
+    'npm': re.compile(r'^(\.npm(ignore|rc)|'
+                      r'npm-shrinkwrap\.json|'
+                      r'package-lock\.json)$'),
+    'nuget': re.compile(r'^(.*\.nuspec|nuget\.config)$', re.I),
+    'pip': re.compile(r'^(requirements([\.-].+)*\.(pip|txt)|'
+                      r'Pipfile(\.lock)?)$'),
+    'readme': re.compile(r'^README(\..+)?$', re.I),
+    'robots': re.compile(r'^robots\.txt$', re.I),
+    'rollup': re.compile(r'^rollup.*\.config\..+$'),
+    'stylelint': re.compile(_rc_ignore('stylelint')),
+    'tern': re.compile(r'^\.tern-(project|config)$'),
+    'travis': re.compile(r'^\.travis\.yml$'),
     'vagrant': re.compile(r'^Vagrantfile$'),
-    'webpack': re.compile(r'^webpack[.]config[.]js$'),
-    'yarn': re.compile(r'^([.]yarn(ignore|rc)|yarn.lock)$'),
+    'webpack': re.compile(r'^webpack.*\.config\..+$'),
+    'yarn': re.compile(r'^(\.yarn(ignore|rc)|yarn.lock)$'),
 }
 
 SUPPORTED_FTS = [
@@ -79,6 +88,7 @@ SUPPORTED_FTS = [
     'elm',
     'erlang',
     'eruby',
+    'glsl',
     'go',
     'graphql',
     'groovy',

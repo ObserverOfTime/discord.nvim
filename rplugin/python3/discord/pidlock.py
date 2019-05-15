@@ -2,10 +2,9 @@ import os
 
 
 def get_tempdir():
-    temp = ['TMPDIR', 'TEMPDIR', 'TMP', 'TEMP']
-    return next((os.environ.get(path, None)
-                 for path in temp if path
-                 in os.environ), '/tmp')
+    temp = ['XDG_RUNTIME_DIR', 'TMPDIR', 'TEMPDIR', 'TMP', 'TEMP']
+    return next((os.environ.get(path, None) for path
+                 in temp if path in os.environ), '/tmp')
 
 
 class PidLock(object):

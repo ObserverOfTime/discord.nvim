@@ -1,6 +1,6 @@
 *discord*  Discord Rich Presence for Neovim.
 
-Version:     0.2.1
+Version:     0.3.0
 Author:      aurieh <me@aurieh.me>
 Maintainer:  ObserverOfTime <chronobserver@disroot.org>
 License:     BSD 3-Clause

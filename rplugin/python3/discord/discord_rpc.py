@@ -62,8 +62,7 @@ class Discord(object):
         self.sock = None
 
         # Discord
-        path = os.environ.get('XDG_RUNTIME_DIR', get_tempdir())
-        self.ipc_path = '{}/discord-ipc-0'.format(path)
+        self.ipc_path = '{}/discord-ipc-0'.format(get_tempdir())
         self.client_id = client_id
 
     def connect(self, client_id=None):

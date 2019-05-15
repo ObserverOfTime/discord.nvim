@@ -33,7 +33,7 @@ To finish things off, call `:UpdateRemotePlugins` and restart Neovim.
 
 ## Icon sources
 
-- [ihodev/a-file-icon](https://github.com/ihodev/a-file-icon)
+- [angeldark96/a-file-icon](https://github.com/angeldark96/a-file-icon)
 - [file-icons/source](https://github.com/file-icons/source)
 - [file-icons/MFixx](https://github.com/file-icons/MFixx)
 - [file-icons/DevOpicons](https://github.com/file-icons/DevOpicons)

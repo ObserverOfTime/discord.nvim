@@ -66,7 +66,7 @@ class DiscordPlugin(object):
         }
         self.activity.setdefault('timestamps', {'start': int(time())})
         if not self.lock:
-            self.lock = PidLock(join(get_tempdir(), 'dnvim_lock'))
+            self.lock = PidLock(join(get_tempdir(), 'dnvim.lock'))
         if self.locked:
             return
         if not self.discord:
