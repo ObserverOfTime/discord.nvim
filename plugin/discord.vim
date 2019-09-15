@@ -63,6 +63,7 @@ if !exists('g:discord_fts_blacklist')
                 \ 'nerdtree',
                 \ 'netrw',
                 \ 'outputvorax',
+                \ 'packager',
                 \ 'pydoc',
                 \ 'qf',
                 \ 'scratch',
@@ -109,10 +110,10 @@ let g:discord_fts_aliases['qml'] = 'qt'
 let g:discord_fts_aliases['scss'] = 'sass'
 let g:discord_fts_aliases['sed'] = 'sh'
 let g:discord_fts_aliases['syslog'] = 'log'
+let g:discord_fts_aliases['systemverilog'] = 'verilog'
 let g:discord_fts_aliases['vb'] = 'dotnet'
 let g:discord_fts_aliases['vbnet'] = 'dotnet'
 let g:discord_fts_aliases['xquery'] = 'xml'
 let g:discord_fts_aliases['xsd'] = 'xml'
 let g:discord_fts_aliases['xslt'] = 'xml'
 let g:discord_fts_aliases['zsh'] = 'sh'
-

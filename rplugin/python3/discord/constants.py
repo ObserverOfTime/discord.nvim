@@ -1,9 +1,7 @@
 import re
 
 
-def _rc_ignore(n):
-    return r'^(\.?{0}rc_ignore(\.js(on)?|\.ya?ml)?|' \
-        r'{0}\.config\.js|\.{0}ignore)$'.format(n)
+_rc_ignore = r'^(\.?{0}rc(\.js(on)?|\.ya?ml)?|{0}\.config\.js|\.{0}ignore)$'
 
 
 CLIENT_ID = '492721776145596416'
@@ -13,7 +11,7 @@ SPECIAL_FTS = {
     'ansible': re.compile(r'^(ansible\.cfg|site.ya?ml|hosts)$'),
     'apache': re.compile(r'^(.*(apache|httpd)\.conf|\.htaccess)$'),
     'appveyor': re.compile(r'^\.?appveyor\.ya?ml$'),
-    'babel': re.compile(_rc_ignore('babel')),
+    'babel': re.compile(_rc_ignore.format('babel')),
     'bower': re.compile(r'^(\.bowerrc|bower\.json)$'),
     'browserslist': re.compile(r'^\.?browserslist(rc|)$'),
     'bundler': re.compile(r'^(Gemfile(\.lock)|\.gemspec)$'),
@@ -26,7 +24,7 @@ SPECIAL_FTS = {
     'docker': re.compile(r'^(docker-(cloud|compose.*)\.ya?ml|'
                          r'\.dockerignore|Dockerfile)$'),
     'editorconfig': re.compile(r'^\.editorconfig$'),
-    'eslint': re.compile(_rc_ignore('eslint')),
+    'eslint': re.compile(_rc_ignore.format('eslint')),
     'firebase': re.compile(r'^(\.?fire(base(\.json|rc)|store\.rules))$'),
     'git': re.compile(r'^(\.git(ignore|attributes|config|'
                       r'modules|keep)|\.mailmap)$'),
@@ -35,9 +33,9 @@ SPECIAL_FTS = {
     'gulp': re.compile(r'^[Gg]ulpfile\.(babel\.js|[jtl]s|coffee)$'),
     'heroku': re.compile(r'^(Procfile|app.json)$'),
     'jenkins': re.compile(r'^Jenkinsfile$'),
-    'license': re.compile(r'^(LICENSE|COPYING)(\..+)?$', re.I),
+    'license': re.compile(r'^(LICENSE|COPYING).*$', re.I),
     'log': re.compile(r'^.+\.log$', re.I),
-    'manifest': re.compile(r'^(manifest\.(mf|json)|'
+    'manifest': re.compile(r'^(manifest\.(mf|json|in)|'
                            r'AndroidManifest\.xml|'
                            r'.*\.webmanifest)$', re.I),
     'maven': re.compile(r'^(pom\.xml|.*\.pom)$'),
@@ -47,12 +45,13 @@ SPECIAL_FTS = {
                       r'npm-shrinkwrap\.json|'
                       r'package-lock\.json)$'),
     'nuget': re.compile(r'^(.*\.nuspec|nuget\.config)$', re.I),
-    'pip': re.compile(r'^(requirements([\.-].+)*\.(pip|txt)|'
-                      r'Pipfile(\.lock)?)$'),
-    'readme': re.compile(r'^README(\..+)?$', re.I),
-    'robots': re.compile(r'^robots\.txt$', re.I),
+    'pip': re.compile(r'^(requirements.*\.(pip|txt)|'
+                      r'Pipfile(\.lock)?|poetry\.lock|'
+                      r'pyproject\.toml)$'),
+    'readme': re.compile(r'^README.*$', re.I),
+    'robots': re.compile(r'^robots\.txt$'),
     'rollup': re.compile(r'^rollup.*\.config\..+$'),
-    'stylelint': re.compile(_rc_ignore('stylelint')),
+    'stylelint': re.compile(_rc_ignore.format('stylelint')),
     'tern': re.compile(r'^\.tern-(project|config)$'),
     'travis': re.compile(r'^\.travis\.yml$'),
     'vagrant': re.compile(r'^Vagrantfile$'),
@@ -95,6 +94,7 @@ SUPPORTED_FTS = [
     'haml',
     'haskell',
     'haxe',
+    'hcl',
     'html',
     'iss',
     'java',
@@ -108,6 +108,7 @@ SUPPORTED_FTS = [
     'less',
     'liquid',
     'lisp',
+    'llvm',
     'log',  # (includes httplog, log4j, messages, syslog)
     'ls',
     'lua',
@@ -125,6 +126,7 @@ SUPPORTED_FTS = [
     'php',
     'plantuml',
     'postcss',
+    'proto',
     'ps1',
     'pug',
     'python',
@@ -145,7 +147,7 @@ SUPPORTED_FTS = [
     'toml',
     'twig',  # (includes html.twig)
     'typescript',
-    'verilog',
+    'verilog',  # (includes systemverilog)
     'vhdl',
     'vim',
     'vue',
@@ -154,4 +156,3 @@ SUPPORTED_FTS = [
 ] + list(SPECIAL_FTS)
 
 __all__ = ['CLIENT_ID', 'SUPPORTED_FTS', 'SPECIAL_FTS']
-

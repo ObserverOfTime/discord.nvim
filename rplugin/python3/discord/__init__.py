@@ -96,14 +96,14 @@ class DiscordPlugin(object):
         filename = self.vim.current.buffer.name
         if not filename:
             return
-        self.log_debug('filename: %s' % filename)
+        self.log_debug('filename: {}'.format(filename))
         if any(f.match(filename) for f in self.blacklist):
             return
         fn = basename(filename)
         ft = self.check_special_fts(fn) or self.get_filetype()
         if not ft:
             return
-        self.log_debug('ft: %s' % ft)
+        self.log_debug('ft: {}'.format(ft))
         if ft in self.fts_blacklist:
             return
         if ft not in SUPPORTED_FTS:
@@ -112,8 +112,9 @@ class DiscordPlugin(object):
         if not bang and self.is_ratelimited(filename):
             if self.cbtimer:
                 self.vim.call('timer_stop', self.cbtimer)
-            self.cbtimer = self.vim.call('timer_start', 15,
-                                         '_DiscordRunScheduled')
+            self.cbtimer = self.vim.call(
+                'timer_start', 15, '_DiscordRunScheduled'
+            )
             return
         self.log_debug('Update presence')
         with handle_lock(self):
@@ -121,13 +122,13 @@ class DiscordPlugin(object):
 
     def _update_presence(self, filename, ft, workspace=None):
         if ft:
-            text = 'Filetype: %s' % ft.upper()
+            text = 'Filetype: {}'.format(ft.upper())
             image = ft if len(ft) > 1 else ft + 'lang'
             self.activity['assets']['large_image'] = image
             self.activity['assets']['large_text'] = text
-            self.activity['details'] = 'Editing %s' % basename(filename)
+            self.activity['details'] = 'Editing {}'.format(basename(filename))
         if workspace:
-            self.activity['state'] = 'Working on %s' % workspace
+            self.activity['state'] = 'Working on {}'.format(workspace)
         self.discord.set_activity(self.activity, self.vim.call('getpid'))
 
     def get_current_buf_var(self, var):
@@ -150,7 +151,7 @@ class DiscordPlugin(object):
     def list_filetypes(self, args):
         a = args[0] if len(args) > 0 else ''
         fts = list(filter(re.compile(a).match, SUPPORTED_FTS))
-        self.vim.command('echo %s' % fts)
+        self.vim.command('echo {}'.format(fts))
 
     @neovim.function('_DiscordRunScheduled')
     def run_scheduled(self, args):
@@ -185,4 +186,3 @@ class DiscordPlugin(object):
             self.vim.call('timer_stop', self.cbtimer)
         if self.discord:
             self.discord.shutdown()
-

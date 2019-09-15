@@ -37,4 +37,3 @@ function! health#discord#check()
     call s:check_python3()
     call s:issue_info()
 endfunction
-

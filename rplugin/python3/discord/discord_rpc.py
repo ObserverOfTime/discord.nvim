@@ -32,10 +32,7 @@ class Message:
     def set_activity(activity, nonce, pid=os.getpid()):
         return {
             'cmd': 'SET_ACTIVITY',
-            'args': {
-                'activity': activity,
-                'pid': pid
-            },
+            'args': {'activity': activity, 'pid': pid},
             'nonce': nonce
         }
 
@@ -137,4 +134,3 @@ class Discord(object):
         self.disconnect()
         self.reconnect_counter += 1
         self.connect(self.client_id)
-

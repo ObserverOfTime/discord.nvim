@@ -42,4 +42,3 @@ To finish things off, call `:UpdateRemotePlugins` and restart Neovim.
 ## License
 
 [BSD 3-Clause](./LICENSE)
-

@@ -1,6 +1,6 @@
 *discord*  Discord Rich Presence for Neovim.
 
-Version:     0.3.0
+Version:     0.3.1
 Author:      aurieh <me@aurieh.me>
 Maintainer:  ObserverOfTime <chronobserver@disroot.org>
 License:     BSD 3-Clause
@@ -91,6 +91,7 @@ g:discord_fts_blacklist                               *g:discord_fts_blacklist*
         \ 'nerdtree',
         \ 'netrw',
         \ 'outputvorax',
+        \ 'packager',
         \ 'pydoc',
         \ 'qf',
         \ 'scratch',
@@ -186,4 +187,3 @@ DiscordListFiletypes [pattern]                           *DiscordListFiletypes*
     argument is given, it will only show the filetypes that match it.
 
 vim: ft=help
-

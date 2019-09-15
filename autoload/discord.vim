@@ -74,4 +74,3 @@ function! discord#log_error(message, trace)
     call add(g:_discord_trace, a:trace)
     echohl ErrorMsg | echomsg '[Discord] ' . a:message | echohl None
 endfunction
-
