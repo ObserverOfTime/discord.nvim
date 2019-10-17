@@ -2,6 +2,8 @@
 
 Discord Rich Presence for Neovim.
 
+Tested on Linux but should also work on Windows & MacOS.
+
 ## Install
 
 Install the plugin using your favorite plugin manager:

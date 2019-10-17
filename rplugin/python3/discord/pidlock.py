@@ -1,6 +1,6 @@
 import os
 
-_temp = ('XDG_RUNTIME_DIR', 'TMPDIR', 'TEMPDIR', 'TMP', 'TEMP')
+_temp = ('XDG_RUNTIME_DIR', 'TEMP', 'TMPDIR', 'TEMPDIR', 'TMP')
 
 
 def get_tempdir():

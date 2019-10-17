@@ -139,6 +139,7 @@ SUPPORTED_FTS = [
     'sh',  # (includes awk, fish, sed, zsh)
     'sql',
     'stylus',
+    'svelte',
     'svg',
     'swift',
     'tcl',

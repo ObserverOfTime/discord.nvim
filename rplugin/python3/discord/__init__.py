@@ -1,13 +1,14 @@
-import neovim
-import re
-
+from atexit import register
 from contextlib import contextmanager
 from os.path import basename, join
-from atexit import register
+from re import compile as regex
 from time import time
+
+import neovim
+
+from .constants import CLIENT_ID, SPECIAL_FTS, SUPPORTED_FTS
 from .discord_rpc import Discord, NoDiscordClientError, ReconnectError
 from .pidlock import PidLock, get_tempdir
-from .constants import CLIENT_ID, SPECIAL_FTS, SUPPORTED_FTS
 
 
 @contextmanager
@@ -44,7 +45,7 @@ class DiscordPlugin(object):
     @neovim.autocmd('VimEnter', '*')
     def on_vimenter(self):
         self.blacklist = [
-            re.compile(x) for x in self.vim.vars.get('discord_blacklist')
+            regex(x) for x in self.vim.vars.get('discord_blacklist')
         ]
         self.activate = self.vim.vars.get('discord_activate_on_enter')
         self.rich_presence = self.vim.vars.get('discord_rich_presence')
@@ -150,7 +151,7 @@ class DiscordPlugin(object):
     @neovim.command('DiscordListFiletypes', '?')
     def list_filetypes(self, args):
         a = args[0] if len(args) > 0 else ''
-        fts = list(filter(re.compile(a).match, SUPPORTED_FTS))
+        fts = list(filter(regex(a).match, SUPPORTED_FTS))
         self.vim.command('echo {}'.format(fts))
 
     @neovim.function('_DiscordRunScheduled')
