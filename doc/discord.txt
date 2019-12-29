@@ -1,6 +1,6 @@
 *discord*  Discord Rich Presence for Neovim.
 
-Version:     0.3.1
+Version:     0.4.0
 Author:      aurieh <me@aurieh.me>
 Maintainer:  ObserverOfTime <chronobserver@disroot.org>
 License:     BSD 3-Clause
@@ -94,8 +94,11 @@ g:discord_fts_blacklist                               *g:discord_fts_blacklist*
         \ 'packager',
         \ 'pydoc',
         \ 'qf',
+        \ 'rbrowser',
+        \ 'rdoc',
         \ 'scratch',
         \ 'tagbar',
+        \ 'unicode',
         \ 'vim-plug',
         \ 'vimfiler',
         \ 'vimshell',

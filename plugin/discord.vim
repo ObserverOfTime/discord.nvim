@@ -43,10 +43,6 @@ if !exists('g:discord_vcs_dirs')
                 \ ]
 endif
 
-if !exists('g:_discord_trace')
-    let g:_discord_trace = []
-endif
-
 if !exists('g:discord_fts_blacklist')
     let g:discord_fts_blacklist = [
                 \ 'ale-preview',
@@ -66,8 +62,11 @@ if !exists('g:discord_fts_blacklist')
                 \ 'packager',
                 \ 'pydoc',
                 \ 'qf',
+                \ 'rbrowser',
+                \ 'rdoc',
                 \ 'scratch',
                 \ 'tagbar',
+                \ 'unicode',
                 \ 'vim-plug',
                 \ 'vimfiler',
                 \ 'vimshell',

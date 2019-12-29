@@ -3,30 +3,20 @@ from contextlib import contextmanager
 from os.path import basename, join
 from re import compile as regex
 from time import time
+from typing import Any, List, Optional as Opt
 
-import neovim
+import neovim as nvim
 
 from .constants import CLIENT_ID, SPECIAL_FTS, SUPPORTED_FTS
 from .discord_rpc import Discord, NoDiscordClientError, ReconnectError
-from .pidlock import PidLock, get_tempdir
+from .pidlock import PidLock
 
 
-@contextmanager
-def handle_lock(plugin):
-    try:
-        yield
-    except NoDiscordClientError:
-        plugin.locked = True
-        plugin.log_warning('Local Discord client not found')
-    except ReconnectError:
-        plugin.locked = True
-        plugin.log_error('Ran out of reconnect attempts')
-
-
-@neovim.plugin
-class DiscordPlugin(object):
-    def __init__(self, vim):
-        self.vim = vim
+@nvim.plugin
+class DiscordPlugin:
+    """The Discord plugin class."""
+    def __init__(self, vim: nvim.Nvim):
+        self._vim = vim
         self.discord = None
         self.activate = 0
         self.rich_presence = 1
@@ -34,31 +24,41 @@ class DiscordPlugin(object):
         self.fts_blacklist = []
         self.fts_aliases = {}
         self.activity = {'assets': {}}
-        # Ratelimits
-        self.lock = None
-        self.locked = False
-        self.lastfilename = None
-        self.lastused = False
-        self.lasttimestamp = time()
-        self.cbtimer = None
+        self.lock = PidLock('dnvim')
+        self.is_locked = False
+        self.con_timer = None
+        self.last_file = None
+        self.last_used = False
+        self.last_time = time()
 
-    @neovim.autocmd('VimEnter', '*')
+    def __call__(self, func: str, *args) -> Any:
+        """Call a vimscript function."""
+        return self._vim.call(func, *args)
+
+    def __getitem__(self, var: str) -> Any:
+        """Get the value of a vim variable."""
+        if var[:1] != '&':
+            return self._vim.vars.get(var)
+        return self('getbufvar', self.bufnr, var)
+
+    @nvim.autocmd('VimEnter', pattern='*', sync=True)
     def on_vimenter(self):
-        self.blacklist = [
-            regex(x) for x in self.vim.vars.get('discord_blacklist')
-        ]
-        self.activate = self.vim.vars.get('discord_activate_on_enter')
-        self.rich_presence = self.vim.vars.get('discord_rich_presence')
-        self.fts_blacklist = self.vim.vars.get('discord_fts_blacklist')
-        self.fts_aliases = self.vim.vars.get('discord_fts_aliases')
+        """Handle the VimEnter autocmd."""
+        self.blacklist = list(map(regex, self['discord_blacklist']))
+        self.activate = self['discord_activate_on_enter']
+        self.rich_presence = self['discord_rich_presence']
+        self.fts_blacklist = self['discord_fts_blacklist']
+        self.fts_aliases = self['discord_fts_aliases']
 
-    @neovim.autocmd('BufEnter', '*')
-    def on_bufenter(self):
+    @nvim.autocmd('BufEnter', pattern='*', sync=True)
+    def on_bufenter(self, *args):
+        """Handle the BufEnter autocmd."""
         if self.activate:
             self.update_presence()
 
-    @neovim.command('DiscordUpdatePresence', bang=True)
-    def update_presence(self, bang=False):
+    @nvim.command('DiscordUpdatePresence', bang=True)
+    def update_presence(self, bang: bool = False):
+        """Handle the DiscordUpdatePresence command."""
         if not self.activate:
             self.activate = 1
         self.activity['assets'] = {
@@ -66,42 +66,39 @@ class DiscordPlugin(object):
             'small_text': 'Neovim FTW'
         }
         self.activity.setdefault('timestamps', {'start': int(time())})
-        if not self.lock:
-            self.lock = PidLock(join(get_tempdir(), 'dnvim.lock'))
-        if self.locked:
+        if self.is_locked:
             return
         if not self.discord:
-            reconnect_threshold = \
-                self.vim.vars.get('discord_reconnect_threshold')
-            self.locked = not self.lock.lock()
-            if self.locked:
-                self.log_warning('Pidfile exists')
+            reconnect_threshold = self['discord_reconnect_threshold']
+            try:
+                self.lock.lock()
+            except (OSError, ValueError) as e:
+                self.log_error(str(e))
                 return
             self.discord = Discord(CLIENT_ID, reconnect_threshold)
-            with handle_lock(self):
+            with self._handle_lock():
                 self.discord.connect()
                 self.log_debug('Init')
-            if self.locked:
+            if self.is_locked:
                 return
             register(self.shutdown)
-        if self.get_current_buf_var('&ro'):
+        if self['&readonly']:
             return
         if not self.rich_presence:
             self.activity['assets'] = {
                 'large_image': 'neovim',
                 'large_text': 'The one true editor'
             }
-            self.discord.set_activity(self.activity,
-                                      self.vim.call('getpid'))
+            self.discord.set_activity(self.activity, self('getpid'))
             return
-        filename = self.vim.current.buffer.name
+        filename = self.filename
         if not filename:
             return
         self.log_debug('filename: {}'.format(filename))
         if any(f.match(filename) for f in self.blacklist):
             return
         fn = basename(filename)
-        ft = self.check_special_fts(fn) or self.get_filetype()
+        ft = self.get_filetype(fn)
         if not ft:
             return
         self.log_debug('ft: {}'.format(ft))
@@ -109,81 +106,116 @@ class DiscordPlugin(object):
             return
         if ft not in SUPPORTED_FTS:
             ft = 'unknown'
-        workspace = self.get_workspace()
-        if not bang and self.is_ratelimited(filename):
-            if self.cbtimer:
-                self.vim.call('timer_stop', self.cbtimer)
-            self.cbtimer = self.vim.call(
-                'timer_start', 15, '_DiscordRunScheduled'
-            )
+        workspace = self.workspace
+        if not bang and self.is_ratelimited():
+            if self.con_timer:
+                self('timer_stop', self.con_timer)
+            self.con_timer = self('timer_start', 15, '_DiscordRunScheduled')
             return
         self.log_debug('Update presence')
-        with handle_lock(self):
-            self._update_presence(filename, ft, workspace)
+        with self._handle_lock():
+            if ft:
+                text = 'Filetype: {}'.format(ft.upper())
+                image = ft if len(ft) > 1 else ft + 'lang'
+                self.activity['assets']['large_image'] = image
+                self.activity['assets']['large_text'] = text
+                self.activity['details'] = 'Editing {}'.format(fn)
+            if workspace:
+                self.activity['state'] = 'Working on {}'.format(workspace)
+            self.discord.set_activity(self.activity, self('getpid'))
 
-    def _update_presence(self, filename, ft, workspace=None):
-        if ft:
-            text = 'Filetype: {}'.format(ft.upper())
-            image = ft if len(ft) > 1 else ft + 'lang'
-            self.activity['assets']['large_image'] = image
-            self.activity['assets']['large_text'] = text
-            self.activity['details'] = 'Editing {}'.format(basename(filename))
-        if workspace:
-            self.activity['state'] = 'Working on {}'.format(workspace)
-        self.discord.set_activity(self.activity, self.vim.call('getpid'))
+    @nvim.command('DiscordListFiletypes', '?')
+    def list_filetypes(self, args: List[str]):
+        """Handle the DiscordListFiletypes command."""
+        if len(args) > 0:
+            pat = regex(args[0])
+            fts = filter(pat.match, SUPPORTED_FTS)
+            self('discord#list_fts', list(fts))
+        else:
+            self('discord#list_fts', SUPPORTED_FTS)
 
-    def get_current_buf_var(self, var):
-        return self.vim.call('getbufvar', self.vim.current.buffer.number, var)
-
-    def get_filetype(self):
-        ft = self.get_current_buf_var('&ft')
-        return self.fts_aliases.get(ft, ft)
-
-    def get_workspace(self):
-        bufnr = self.vim.current.buffer.number
-        dirpath = self.vim.call('discord#get_workspace', bufnr)
-        return (basename(dirpath) if dirpath else None)
-
-    def check_special_fts(self, var):
-        return next((k for k, v in SPECIAL_FTS.items()
-                     if bool(v.fullmatch(var))), None)
-
-    @neovim.command('DiscordListFiletypes', '?')
-    def list_filetypes(self, args):
-        a = args[0] if len(args) > 0 else ''
-        fts = list(filter(regex(a).match, SUPPORTED_FTS))
-        self.vim.command('echo {}'.format(fts))
-
-    @neovim.function('_DiscordRunScheduled')
-    def run_scheduled(self, args):
-        self.cbtimer = None
+    @nvim.function('_DiscordRunScheduled')
+    def run_scheduled(self, args: List[int]):
+        """Handle the _DiscordRunScheduled function."""
+        self.con_timer = None
         self.update_presence()
 
-    def is_ratelimited(self, filename):
-        if self.lastfilename == filename:
+    @property
+    def filename(self) -> str:
+        """Get the current filename."""
+        return self._vim.current.buffer.name
+
+    @property
+    def bufnr(self) -> int:
+        """Get the current buffer number."""
+        return self._vim.current.buffer.number
+
+    @property
+    def workspace(self) -> Opt[str]:
+        """Get the current workspace."""
+        dirpath = self('discord#get_workspace', self.bufnr)
+        return basename(dirpath) if dirpath else None
+
+    @property
+    def filetype(self) -> str:
+        """Get the current filetype."""
+        ft = self['&filetype']
+        return self.fts_aliases.get(ft, ft)
+
+    def get_filetype(self, var: str) -> str:
+        """Get the filetype, taking special files into account."""
+        return next((k for k, v in SPECIAL_FTS.items()
+                     if bool(v.match(var))), self.filetype)
+
+    def is_ratelimited(self) -> bool:
+        """Check whether we're being rate-limited."""
+        filename = self.filename
+        if self.last_file == filename:
             return True
         now = time()
-        if (now - self.lasttimestamp) >= 15:
-            self.lastused = False
-            self.lasttimestamp = now
-        if self.lastused:
+        if now - self.last_time >= 15:
+            self.last_used = False
+            self.last_time = now
+        if self.last_used:
             return True
-        self.lastused = True
-        self.lastfilename = filename
+        self.last_used = True
+        self.last_file = filename
 
-    def log_debug(self, message, trace=None):
-        self.vim.call('discord#log_debug', message, trace)
+    def log_debug(self, message: str):
+        """Log a debug message."""
+        self('discord#log_debug', message)
 
-    def log_warning(self, message, trace=None):
-        self.vim.call('discord#log_warn', message, trace)
+    def log_warn(self, message: str):
+        """Log a warning message."""
+        self('discord#log_warn', message)
 
-    def log_error(self, message, trace=None):
-        self.vim.call('discord#log_error', message, trace)
+    def log_error(self, message: str):
+        """Log an error message."""
+        self('discord#log_error', message)
 
     def shutdown(self):
+        """Shut everything down."""
         if self.lock:
-            self.lock.unlock()
-        if self.cbtimer:
-            self.vim.call('timer_stop', self.cbtimer)
+            try:
+                self.lock.unlock()
+            except (OSError, ValueError) as e:
+                self.log_warn(str(e))
+        if self.con_timer:
+            self('timer_stop', self.con_timer)
         if self.discord:
             self.discord.shutdown()
+
+    @contextmanager
+    def _handle_lock(self):
+        """Handle the plugin lock."""
+        try:
+            yield
+        except NoDiscordClientError:
+            self.is_locked = True
+            self.log_warn('Local Discord client not found')
+        except ReconnectError:
+            self.is_locked = True
+            self.log_error('Ran out of reconnect attempts')
+
+
+__all__ = ['DiscordPlugin']

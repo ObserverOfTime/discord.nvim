@@ -4,8 +4,10 @@ import re
 _rc_ignore = r'^(\.?{0}rc(\.js(on)?|\.ya?ml)?|{0}\.config\.js|\.{0}ignore)$'
 
 
+#: The ID of the Discord RPC client.
 CLIENT_ID = '492721776145596416'
 
+#: A mapping of special filetypes to filename patterns.
 SPECIAL_FTS = {
     'angular': re.compile(r'\.?angular(-cli)?.json'),
     'ansible': re.compile(r'^(ansible\.cfg|site.ya?ml|hosts)$'),
@@ -45,7 +47,7 @@ SPECIAL_FTS = {
                       r'npm-shrinkwrap\.json|'
                       r'package-lock\.json)$'),
     'nuget': re.compile(r'^(.*\.nuspec|nuget\.config)$', re.I),
-    'pip': re.compile(r'^(requirements.*\.(pip|txt)|'
+    'pip': re.compile(r'^(.*requirements.*\.(pip|txt)|'
                       r'Pipfile(\.lock)?|poetry\.lock|'
                       r'pyproject\.toml)$'),
     'readme': re.compile(r'^README.*$', re.I),
@@ -59,6 +61,7 @@ SPECIAL_FTS = {
     'yarn': re.compile(r'^(\.yarn(ignore|rc)|yarn.lock)$'),
 }
 
+#: A list of supported filetypes.
 SUPPORTED_FTS = [
     'actionscript',
     'ant',

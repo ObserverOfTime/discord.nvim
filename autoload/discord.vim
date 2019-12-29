@@ -1,5 +1,5 @@
 " Stolen from https://github.com/w0rp/ale/blob/master/autoload/ale/path.vim#37
-function! discord#find_nearest_dir(buffer, dirname)
+function! discord#_find_nearest_dir(buffer, dirname)
     let l:file = fnameescape(fnamemodify(bufname(a:buffer), ':p'))
     let l:path = finddir(a:dirname, l:file . ';')
     if !empty(l:path)
@@ -44,7 +44,7 @@ function! discord#get_workspace(buffer)
         return g:discord_workspace
     endif
     for l:vcs_dir in g:discord_vcs_dirs
-        let l:dir = discord#find_nearest_dir(a:buffer, l:vcs_dir)
+        let l:dir = discord#_find_nearest_dir(a:buffer, l:vcs_dir)
         if !empty(l:dir)
             let l:info = s:project_info[l:vcs_dir]
             let l:name = discord#_parse_vcs_info(l:info)
@@ -58,19 +58,20 @@ function! discord#get_workspace(buffer)
     return ''
 endfunction
 
-function! discord#log_debug(message, trace)
-    call add(g:_discord_trace, a:trace)
+function! discord#log_debug(message)
     if g:discord_log_debug
         echomsg '[Discord] ' . a:message
     endif
 endfunction
 
-function! discord#log_warn(message, trace)
-    call add(g:_discord_trace, a:trace)
+function! discord#log_warn(message)
     echohl WarningMsg | echomsg '[Discord] ' . a:message | echohl None
 endfunction
 
-function! discord#log_error(message, trace)
-    call add(g:_discord_trace, a:trace)
+function! discord#log_error(message)
     echohl ErrorMsg | echomsg '[Discord] ' . a:message | echohl None
+endfunction
+
+function! discord#list_fts(filetypes)
+    echo a:filetypes
 endfunction

@@ -27,7 +27,7 @@ endfunction
 
 function! s:issue_info()
     call health#report_info('If you are still having problems, '.
-                \ 'create an issue on https://git.io/fAFLw')
+                \ 'create an issue at https://git.io/fAFLw')
 endfunction
 
 function! health#discord#check()
