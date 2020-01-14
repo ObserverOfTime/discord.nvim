@@ -49,6 +49,7 @@ if !exists('g:discord_fts_blacklist')
                 \ 'connvorax',
                 \ 'deol',
                 \ 'far_vim',
+                \ 'fugitiveblame',
                 \ 'fzf',
                 \ 'gitcommit',
                 \ 'help',

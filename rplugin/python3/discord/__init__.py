@@ -180,6 +180,7 @@ class DiscordPlugin:
             return True
         self.last_used = True
         self.last_file = filename
+        return False
 
     def log_debug(self, message: str):
         """Log a debug message."""

@@ -1,8 +1,6 @@
 import re
 
-
 _rc_ignore = r'^(\.?{0}rc(\.js(on)?|\.ya?ml)?|{0}\.config\.js|\.{0}ignore)$'
-
 
 #: The ID of the Discord RPC client.
 CLIENT_ID = '492721776145596416'
@@ -35,7 +33,7 @@ SPECIAL_FTS = {
     'gulp': re.compile(r'^[Gg]ulpfile\.(babel\.js|[jtl]s|coffee)$'),
     'heroku': re.compile(r'^(Procfile|app.json)$'),
     'jenkins': re.compile(r'^Jenkinsfile$'),
-    'license': re.compile(r'^(LICENSE|COPYING).*$', re.I),
+    'license': re.compile(r'^(LICEN[CS]E|COPYING).*$', re.I),
     'log': re.compile(r'^.+\.log$', re.I),
     'manifest': re.compile(r'^(manifest\.(mf|json|in)|'
                            r'AndroidManifest\.xml|'
@@ -99,6 +97,7 @@ SUPPORTED_FTS = [
     'haxe',
     'hcl',
     'html',
+    'ipynb',
     'iss',
     'java',
     'javascript',

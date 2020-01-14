@@ -131,7 +131,7 @@ class Discord:
         nonce = str(uuid4())
         self.send(OP.FRAME, Message.set_activity(activity, nonce, pid))
         op, length = self.peek()
-        if not (op or length):
+        if not op and not length:
             # There was a successful reconnect attempt
             return self.set_activity(activity, pid)
         body = self.recv(length)
