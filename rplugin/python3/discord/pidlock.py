@@ -16,16 +16,13 @@ class PidLock:
 
     def lock(self):
         """Create the pidfile."""
-        self.unlock()
         with open(self.path, 'w') as f:
             f.write(str(os.getpid()))
 
     def unlock(self):
         """Remove the pidfile."""
-        if os.path.exists(self.path):
-            with open(self.path, 'r') as f:
-                pid = int(f.read())
-                if pid and pid != os.getpid():
-                    os.kill(pid, 0)
-                    raise OSError(17, 'Pidfile exists', self.path)
-            os.remove(self.path)
+        with open(self.path, 'r') as f:
+            os.unlink(self.path)
+            pid = int(f.read())
+            if pid and pid != os.getpid():
+                os.kill(pid, 0)

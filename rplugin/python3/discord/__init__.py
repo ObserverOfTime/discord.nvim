@@ -30,6 +30,7 @@ class DiscordPlugin:
         self.last_file = None
         self.last_used = False
         self.last_time = time()
+        register(self.shutdown)
 
     def __call__(self, func: str, *args) -> Any:
         """Call a vimscript function."""
@@ -81,7 +82,6 @@ class DiscordPlugin:
                 self.log_debug('Init')
             if self.is_locked:
                 return
-            register(self.shutdown)
         if self['&readonly']:
             return
         if not self.rich_presence:
@@ -196,11 +196,10 @@ class DiscordPlugin:
 
     def shutdown(self):
         """Shut everything down."""
-        if self.lock:
-            try:
-                self.lock.unlock()
-            except (OSError, ValueError) as e:
-                self.log_warn(str(e))
+        try:
+            self.lock.unlock()
+        except (OSError, ValueError) as e:
+            self.log_warn(str(e))
         if self.con_timer:
             self('timer_stop', self.con_timer)
         if self.discord:

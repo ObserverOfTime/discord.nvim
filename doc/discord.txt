@@ -1,6 +1,6 @@
 *discord*  Discord Rich Presence for Neovim.
 
-Version:     0.4.1
+Version:     0.4.2
 Author:      aurieh <me@aurieh.me>
 Maintainer:  ObserverOfTime <chronobserver@disroot.org>
 License:     BSD 3-Clause
@@ -116,7 +116,7 @@ g:discord_fts_aliases                                   *g:discord_fts_aliases*
         \ 'awk': 'sh',
         \ 'bib': 'tex',
         \ 'cfg': 'config',
-        \ 'conf': config',
+        \ 'conf': 'config',
         \ 'delphi': 'pascal',
         \ 'dosini': 'config',
         \ 'dtd': 'xml',
@@ -125,20 +125,28 @@ g:discord_fts_aliases                                   *g:discord_fts_aliases*
         \ 'html.mustache': 'mustache',
         \ 'html.twig': 'twig',
         \ 'htmldjango': 'django',
+        \ 'httplog': 'log',
+        \ 'jade': 'pug',
         \ 'javascript.jsx': 'jsx',
         \ 'jinja.html': 'jinja',
         \ 'jinja2': 'jinja',
         \ 'jproperties': 'config',
         \ 'json5': 'json',
+        \ 'log4j': 'log',
+        \ 'messages': 'log',
         \ 'mips': 'asm',
         \ 'nasm': 'asm',
         \ 'perl6': 'perl',
         \ 'plaintex': 'tex',
+        \ 'pyrex': 'cython',
         \ 'qbs': 'qt',
         \ 'qmake': 'qt',
         \ 'qml': 'qt',
+        \ 'rmd': 'markdown',
         \ 'scss': 'sass',
         \ 'sed': 'sh',
+        \ 'syslog': 'log',
+        \ 'systemverilog': 'verilog',
         \ 'vb': 'dotnet',
         \ 'vbnet': 'dotnet',
         \ 'xquery': 'xml',
@@ -190,4 +198,4 @@ DiscordListFiletypes [pattern]                           *DiscordListFiletypes*
     Lists the |filetypes| supported by this plugin. When the [pattern]
     argument is given, it will only show the filetypes that match it.
 
-vim: ft=help
+vim:tw=78:ts=8:ft=help:norl:
