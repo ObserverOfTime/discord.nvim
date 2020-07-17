@@ -1,6 +1,6 @@
 *discord*  Discord Rich Presence for Neovim.
 
-Version:     0.4.2
+Version:     0.4.3
 Author:      aurieh <me@aurieh.me>
 Maintainer:  ObserverOfTime <chronobserver@disroot.org>
 License:     BSD 3-Clause
@@ -23,6 +23,7 @@ CONTENTS                                                     *discord-contents*
     2.2 Commands                                             |discord-commands|
       2.2.1 DiscordUpdatePresence                       |DiscordUpdatePresence|
       2.2.2 DiscordListFiletypes                         |DiscordListFiletypes|
+      2.2.2 DiscordClearCache                               |DiscordClearCache|
 
 ===============================================================================
 INTRODUCTION                                             *discord-introduction*
@@ -197,5 +198,9 @@ DiscordListFiletypes [pattern]                           *DiscordListFiletypes*
 
     Lists the |filetypes| supported by this plugin. When the [pattern]
     argument is given, it will only show the filetypes that match it.
+
+DiscordClearCache                                           *DiscordClearCache*
+
+    Clears the filetype cache of the plugin.
 
 vim:tw=78:ts=8:ft=help:norl:

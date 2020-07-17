@@ -23,6 +23,7 @@ class DiscordPlugin:
         self.blacklist = []
         self.fts_blacklist = []
         self.fts_aliases = {}
+        self._ft_cache = {}
         self.activity = {'assets': {}}
         self.lock = PidLock('dnvim')
         self.is_locked = False
@@ -128,11 +129,16 @@ class DiscordPlugin:
     def list_filetypes(self, args: List[str]):
         """Handle the DiscordListFiletypes command."""
         if len(args) > 0:
-            pat = regex(args[0])
+            pat = regex('.*{}.*'.format(args[0]))
             fts = filter(pat.match, SUPPORTED_FTS)
-            self('discord#list_fts', list(fts))
+            self._vim.command('echo {}'.format(list(fts)))
         else:
-            self('discord#list_fts', SUPPORTED_FTS)
+            self._vim.command('echo {}'.format(SUPPORTED_FTS))
+
+    @nvim.command('DiscordClearCache')
+    def clear_cache(self, args):
+        """Handle the DiscordClearCache command."""
+        self._ft_cache.clear()
 
     @nvim.function('_DiscordRunScheduled')
     def run_scheduled(self, args: List[int]):
@@ -164,8 +170,11 @@ class DiscordPlugin:
 
     def get_filetype(self, var: str) -> str:
         """Get the filetype, taking special files into account."""
-        return next((k for k, v in SPECIAL_FTS.items()
-                     if bool(v.match(var))), self.filetype)
+        if var not in self._ft_cache:
+            self._ft_cache[var] = next((
+                k for k, v in SPECIAL_FTS.items() if bool(v.match(var))
+            ), self.filetype)
+        return self._ft_cache[var]
 
     def is_ratelimited(self) -> bool:
         """Check whether we're being rate-limited."""

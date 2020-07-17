@@ -1,6 +1,6 @@
 {
   "name": "discord.nvim",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Discord rich presence for Neovim.",
   "author": "aurieh <me@aurieh.me>",
   "maintainer": "ObserverOfTime <chronobserver@disroot.org>",

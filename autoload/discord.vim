@@ -71,7 +71,3 @@ endfunction
 function! discord#log_error(message)
     echohl ErrorMsg | echomsg '[Discord] ' . a:message | echohl None
 endfunction
-
-function! discord#list_fts(filetypes)
-    echo a:filetypes
-endfunction

@@ -1,12 +1,11 @@
 import os
 
-_temp = ('XDG_RUNTIME_DIR', 'TEMP', 'TMPDIR', 'TEMPDIR', 'TMP')
-
 
 def get_tempdir() -> str:
     """Get the directory where temporary files are stored."""
-    return next((os.environ.get(path) for path
-                 in _temp if path in os.environ), '/tmp')
+    return next((os.environ[var] for var in (
+        'XDG_RUNTIME_DIR', 'TMPDIR', 'TMP', 'TEMP'
+    ) if var in os.environ), '/tmp')
 
 
 class PidLock:
