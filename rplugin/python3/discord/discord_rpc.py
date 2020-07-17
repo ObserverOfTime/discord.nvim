@@ -76,6 +76,7 @@ class IPC:
         if self._is_windows:
             self.socket.write(body)
             self.socket.flush()
+            self.close()
         else:
             self.socket.sendall(body)
 
@@ -84,7 +85,9 @@ class IPC:
         if not self.socket:
             self.open()
         if self._is_windows:
-            return self.socket.read(length)
+            data = self.socket.read(length)
+            self.close()
+            return data
         else:
             return self.socket.recv(length)
 
