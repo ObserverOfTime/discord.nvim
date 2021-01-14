@@ -1,5 +1,6 @@
 from atexit import register
 from contextlib import contextmanager
+from functools import lru_cache
 from os.path import basename, join
 from re import compile as regex
 from time import time
@@ -51,6 +52,7 @@ class DiscordPlugin:
         self.rich_presence = self['discord_rich_presence']
         self.fts_blacklist = self['discord_fts_blacklist']
         self.fts_aliases = self['discord_fts_aliases']
+        self.project_url = self['discord_project_url']
 
     @nvim.autocmd('BufEnter', pattern='*', sync=True)
     def on_bufenter(self, *args):
@@ -68,6 +70,10 @@ class DiscordPlugin:
             'small_text': 'Neovim FTW'
         }
         self.activity.setdefault('timestamps', {'start': int(time())})
+        if self.project_url:
+            self.activity.setdefault('buttons', [
+                {'label': 'Open project URL', 'url': self.project_url}
+            ])
         if self.is_locked:
             return
         if not self.discord:
@@ -157,6 +163,7 @@ class DiscordPlugin:
         return self._vim.current.buffer.number
 
     @property
+    @lru_cache(maxsize=None)
     def workspace(self) -> Opt[str]:
         """Get the current workspace."""
         dirpath = self('discord#get_workspace', self.bufnr)
