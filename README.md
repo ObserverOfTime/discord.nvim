@@ -26,7 +26,12 @@ Plug 'ObserverOfTime/discord.nvim', {'do': ':UpdateRemotePlugins'}
 call dein#add('ObserverOfTime/discord.nvim')
 ```
 
-To finish things off, call `:UpdateRemotePlugins` and restart Neovim.
+To finish things off, run `:UpdateRemotePlugins`
+(also do that when uninstalling) and restart Neovim.
+
+For your custom status to show up on Discord,
+***Display currently running game as a status message***
+must be enabled under **Settings** -> **Game Activity**.
 
 ## TODO
 
